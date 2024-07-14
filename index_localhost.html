@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Classification Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input[type="file"] {
+            display: block;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .form-group button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+    </style>
+    <script>
+        function classifyImage() {
+            var input = document.getElementById('imageInput');
+            var file = input.files[0];
+            
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('http://127.0.0.1:5000/classify', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error(data.error);
+                    document.getElementById('result').textContent = 'Error: ' + data.error;
+                } else {
+                    console.log('Predicted class:', data.class);
+                    document.getElementById('result').textContent = 'Predicted class: ' + data.class;
+                }
+            })
+            .catch(error => console.error(error));
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Classification Website</h1>
+        <div class="form-group">
+            <label for="imageInput">Select an image:</label>
+            <input type="file" id="imageInput">
+        </div>
+        <div class="form-group">
+            <button onclick="classifyImage()">Classify Image</button>
+        </div>
+        <div id="result" class="result"></div>
+    </div>
+</body>
+</html>
